@@ -111,7 +111,7 @@ void start_analyse(char *line)
 
     devname = "eth0";
 
-    printf("Opening device %s for sniffing ... Done.(Use cmd: stop - for end sniffing)" , devname);    //Open the device for sniffing
+    printf("Opening device %s for sniffing ... Done.(Use cmd: stop - for end sniffing)\n" , devname);    //Open the device for sniffing
     handle = pcap_open_live(devname , 65536 , 1 , 0 , errbuf);
     if (handle == NULL) 
     {
