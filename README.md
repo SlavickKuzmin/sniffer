@@ -13,4 +13,5 @@ stat [iface] <br/>
  --help <br/>
   -(show usage information)<br/>
 The program running in the background. After sniff start you must use sniff stop to stop the daemon.<br/>
-The program uses a libpcap library for catching packages.
+The program uses a libpcap library for catching packages.<br/>
+The program must be run with sudo or root user.
