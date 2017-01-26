@@ -85,30 +85,36 @@ int show_ip_count(char* ip_str)
 
  return atoi(ht_get(hashtable, ip_str));   
 }
-void start_analyse(char *line)
+void start_analyse()
 {
     createDaemon();
 
     char name[10];
     int fl=1;
 
-    fstat = fopen(line, "w");
+    fstat = fopen("eth0", "w");
     interfaces = fopen(INTERFACES, "a+");
 
     while(!feof(interfaces))
     {
-        if(strcmp(name, line)==0) { fl = 0 ; break; }
+        if(strcmp(name, "eth0")==0) { fl = 0 ; break; }
         else fl = 1;
         fscanf(interfaces, "%s", name);
     }
 
     if(fl == 1) {
         fseek(interfaces, SEEK_END, 1);
-        fprintf(interfaces, "%s ", line);
+        fprintf(interfaces, "%s ", "eth0");
     }
     fclose(interfaces);
 
-
+    fstat = fopen("eth0", "w");
+    if(fstat == NULL)
+    {
+        printf("Can't open file: %s\n", fstat);
+        exit(1);
+    }
+    
     devname = "eth0";
 
     printf("Opening device %s for sniffing ... Done.(Use cmd: stop - for end sniffing)\n" , devname);    //Open the device for sniffing

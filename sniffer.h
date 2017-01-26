@@ -27,7 +27,7 @@
 void packet_callback(u_char *, const struct pcap_pkthdr *, const u_char *);
 void print_ip_packet  (const u_char* , int);
 int show_ip_count(char* ip_str);
-void start_analyse(char *line);
+void start_analyse();
 void stop_analyse();
 void stat(char *line);
 void select_iface(char* iface);
