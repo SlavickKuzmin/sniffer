@@ -1,4 +1,5 @@
 #Quick start:<br/>
+#===WARNING: this version unstable and verry bad!!!!!===
 The cli support command:<br/>
 start<br/> 
     - (packets are being sniffed from now on from default iface(eth0))<br/>
