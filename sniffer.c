@@ -293,11 +293,11 @@ void createDaemon(char *dev)
 
    
     fread(&spid, 1, sizeof(struct SPID), file);
-    printf("1\n");
+
     int steps=0;
     int flg = 1;
     if(feof(file)){
-    printf("2\n");
+
         fseek(file, 0, SEEK_SET);
      strcpy(spid.dev,dev);
      spid.pid = sid;
@@ -305,19 +305,19 @@ void createDaemon(char *dev)
     }
     else
     {
-        printf("3\n");
+ 
         while(1)
         {
-            printf("4\n");
+
             steps++;
          if(strcmp(spid.dev, dev)==0)
          {
-             printf("5\n");
+      
          flg = 0;
          if(spid.pid != -1) {printf("exec\n"); exit(0);}
          int i;
          fclose(file);
-         printf("6\n");
+
          file = fopen("pids", "w+b");
          for(i=0;i<steps-1;i++)
              fread(&spid, 1, sizeof(struct SPID), file);
@@ -400,11 +400,7 @@ void statis(char *line)
                 break;
         }
         */
-     	if ((fd = open("sharFile", O_RDONLY)) < 0)
-		dieWithError("open() failed");
-	
-        while (read(fd, fifoBuffer, BUFFER_SIZE) > 0)
-		printf("%s", fifoBuffer);
+     
     }
 }
 void hdl(int sig)
@@ -414,12 +410,8 @@ void hdl(int sig)
         char *signal;
         if(sig == SIGUSR1)
         {
-            printf("Im breakloop... %d", handle);
             //pcap_breakloop(handle);
             printf("Done.\n");
-            int i;
-            for(i=0;i<10;i++)
-               printf("SIGUSR1\n");
             printf("My Process ID: %d\n", getpid());
             
             printhash();
