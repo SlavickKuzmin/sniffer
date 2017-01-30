@@ -47,47 +47,10 @@ void print_ip_packet(const u_char * Buffer, int Size)
     ht_set(hashtable, inet_ntoa(source.sin_addr), "1");
 
     fseek(flstat, SEEK_SET, 0);
-   // fflush(stdout);
-   // printf("vector size=%d \n", vector_count(&v));
-   // fflush(stdout);
     for(i=0; i < vector_count(&v); i++)
         fprintf(flstat, "%s %s\n", (char*)vector_get(&v, i), ht_get(hashtable, (char*)vector_get(&v, i)) );
 }
 
-int show_ip_count(char* ip_str)
-{
-    char fname[20];
-    char ip[15];
-    char count[15];
-
-    interfaces = fopen(INTERFACES, "r");
-    while(1)
-    {
-        fscanf(interfaces, "%s", fname);
-        if(!feof(interfaces))
-        {
-            flstat = fopen(fname, "r");
-            if(flstat == NULL) {
-                printf("Can't open file: %s. Program stopped.\n", fname);
-                exit(1);
-            }
-            while(1)
-            {
-                fscanf(flstat, "%s", ip);
-                fscanf(flstat, "%s", count);
-                if(!feof(flstat))
-                    ht_add(hashtable, ip, count);
-                else
-                    break;
-            }
-        }
-        else break;
-    }
-    fclose(flstat);
-    fclose(interfaces);
-
- return atoi(ht_get(hashtable, ip_str));   
-}
 void start_analyse()
 {
     createDaemon("eth0");
@@ -134,19 +97,7 @@ void start_analyse()
 void stop_analyse()
 {
     pid_t pid;
-   /* file = fopen(FILENAME, "r");
-    fscanf(file, "%d", &pid);
-    fclose(file);
-    file = fopen(FILENAME, "w");
-    fprintf(file, "%d", -1);
-    fclose(file);
-    if(pid == -1)
-    {
-        printf("Error, program not run! Use ./sniff start\n");
-        exit(1);
-    }
-    kill(pid, SIGKILL);
-    printf("Prorgam stopped.\n");*/
+
     file = fopen("pids", "a+b");
     if(file == NULL) printf("pids error\n");
         printf("Ok1\n");
@@ -188,7 +139,6 @@ void select_iface(char* iface)
 {
 
     createDaemon(iface);
-    createShMem();
     
     char name[10];
     int fl=1;
@@ -241,28 +191,9 @@ void createDaemon(char *dev)
     char name[10];
     int pid;
     int fl=1;
-    
-    //memcpy(currDev,dev, strlen(dev)*sizeof(char));
 
     currDev = strdup(dev);
 
-    /*file = fopen(FILENAME, "r");
-    if(file == NULL)
-    {
-     file = fopen(FILENAME, "w");
-     fprintf(file, "%d", -1);
-     fclose(file);
-     file = fopen(FILENAME, "r");
-    }
-    
-    fscanf(file, "%d", &sid);
-    fclose(file);
-    
-    if(sid != -1){
-        printf("Error! Program already exist. Use ./sniff stop.\n");
-        exit(1);
-    }
-*/
     printf("Create daemon ... \n");
     process_id = fork();    // Create child process
 
@@ -281,16 +212,11 @@ void createDaemon(char *dev)
         exit(1);// Return failure
     }
     printf("Process ID: %d\n", sid);
-   /* file = fopen(FILENAME, "w");
-    fprintf(file, "%d\n", sid);
-    fclose(file);*/
 
     struct SPID spid;
    
     file = fopen("pids", "a+b");
     if(file == NULL) printf("error!\n");
-   
-
    
     fread(&spid, 1, sizeof(struct SPID), file);
 
@@ -344,65 +270,6 @@ void createDaemon(char *dev)
     printf("Done.\n");
 }
 
-void statis(char *line)
-{
-    char ip[15];
-    char count[15];
-    char fname[50];
-
-    if(line == NULL)
-    {
-        interfaces = fopen(INTERFACES, "r");
-        if(interfaces == NULL) {
-            printf("Can't open file: %s. Program stopped.\n", INTERFACES);
-            exit(1);
-        }
-        while(1)
-        {
-            fscanf(interfaces, "%s", fname);
-            if(!feof(interfaces))
-            {
-            flstat = fopen(fname, "r");
-            if(flstat == NULL) {
-                printf("Can't open file: %s. Program stopped.\n", fname);
-                exit(1);
-            }
-            printf("Interface :%s\n", fname);
-            while(1)
-            {
-                fscanf(flstat, "%s", ip);
-                fscanf(flstat, "%s", count);
-                if(!feof(flstat))
-                    printf("IP: %s :\t%s packets.\n", ip, count);
-                else
-                    break;
-            }
-            }
-            else break;
-            fclose(flstat);
-        }
-        fclose(interfaces);
-    }
-    else
-    {
-     /*   flstat = fopen(line, "r");
-        if(flstat == NULL) {
-            printf("Can't open file: %s. Program stopped.\n", line);
-            exit(1);
-        }
-        while(1)
-        {
-            fscanf(flstat, "%s", ip);
-            fscanf(flstat, "%s", count);
-            if(!feof(flstat))
-            printf("IP: %s :\t%s packets.\n", ip, count);
-            else
-                break;
-        }
-        */
-     
-    }
-}
 void hdl(int sig)
 {
         printf("\n");
@@ -410,23 +277,16 @@ void hdl(int sig)
         char *signal;
         if(sig == SIGUSR1)
         {
-            //pcap_breakloop(handle);
+            
             printf("Done.\n");
             printf("My Process ID: %d\n", getpid());
             
             printhash();
             
-           // handle = pcap_open_live(devname , 65536 , 1 , 0 , errbuf);
-           // pcap_loop(handle , -1 , packet_callback , NULL);    //Put the device in sniff loop
+           
         }
         else if(sig == SIGUSR2)
         {
-            printf("Im breakloop... %d", handle);
-            //pcap_breakloop(handle);
-            printf("Done.\n");
-            int i;
-            for(i=0;i<10;i++)
-               printf("SIGUSR1\n");
             printf("My Process ID: %d\n", getpid());
             
             sh_ip();
@@ -442,18 +302,7 @@ void dieWithError(char *msg)
 }
 void createShMem()
 {
-   // printf("Creating fifo...\n");
 
-	//create FIFO
-//	if ((mkfifo("sharFile" , 0744)) < 0)
-//		dieWithError("mkfifo() failed\n");
-//else printf("Done.\n");
-
-//	if ((fd = open("sharFile", O_WRONLY)) < 0)
-//		dieWithError("open() failed");
-//    printf("Done.\n");
-//    fflush(stdout);
-//    fflush(stdin);
 }
 void printhash(){
     int i;

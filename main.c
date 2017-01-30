@@ -16,15 +16,6 @@ int main(int argc, char **argv)
     hashtable  = ht_create(10000);
     vector_init(&v);
 
-   /* act.sa_handler = hdl;
-    sigset_t   set;
-    sigemptyset(&set);                                                            
-    sigaddset(&set, SIGUSR1);
-    sigaddset(&set, SIGUSR2);
-    act.sa_mask = set;
-    sigaction(SIGUSR1, &act, 0);
-    sigaction(SIGUSR2, &act, 0);*/
-    
    sigemptyset(&act.sa_mask);
    act.sa_flags = 0;
    act.sa_handler = hdl;
